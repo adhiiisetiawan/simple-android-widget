@@ -1,25 +1,26 @@
 package com.example.simplewidget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
 import android.widget.RemoteViews;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class RandomNumbersWidget extends AppWidgetProvider {
+    private static String WIDGET_CLICK = "widgetclick";
+    private static String WIDGET_ID_EXTRA = "widget_id_extra";
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+    void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
-
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.random_numbers_widget);
         String lastUpdate = "Random: " + RandomNumberGenerator.Generate(100);
         views.setTextViewText(R.id.appwidget_text, lastUpdate);
-
-        // Instruct the widget manager to update the widget
+//        views.setOnClickPendingIntent(R.id.btn_click, );
+        views.setOnClickPendingIntent(R.id.btn_click, getPendingSelfIntent(context, appWidgetId, WIDGET_CLICK));
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
@@ -39,6 +40,26 @@ public class RandomNumbersWidget extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+        if (WIDGET_CLICK.equals(intent.getAction())){
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.random_numbers_widget);
+            String lastUpdate = "Random: " + RandomNumberGenerator.Generate(100);
+            int appWidgetId = intent.getIntExtra(WIDGET_ID_EXTRA, 0);
+            remoteViews.setTextViewText(R.id.appwidget_text, lastUpdate);
+            appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
+        }
+    }
+
+    private PendingIntent getPendingSelfIntent(Context context, int appWidgetId, String action){
+        Intent intent = new Intent(context, getClass());
+        intent.setAction(action);
+        intent.putExtra(WIDGET_ID_EXTRA, appWidgetId);
+        return PendingIntent.getBroadcast(context, appWidgetId, intent, 0);
     }
 }
 
