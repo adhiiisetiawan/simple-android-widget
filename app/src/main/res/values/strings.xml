@@ -2,4 +2,6 @@
     <string name="app_name">Simple Widget</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+    <string name="start_update">Start Update</string>
+    <string name="stop_update">Stop Update</string>
 </resources>
