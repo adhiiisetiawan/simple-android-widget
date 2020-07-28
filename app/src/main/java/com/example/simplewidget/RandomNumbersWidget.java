@@ -16,7 +16,8 @@ public class RandomNumbersWidget extends AppWidgetProvider {
         CharSequence widgetText = context.getString(R.string.appwidget_text);
         // Construct the RemoteViews object
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.random_numbers_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
+        String lastUpdate = "Random: " + RandomNumberGenerator.Generate(100);
+        views.setTextViewText(R.id.appwidget_text, lastUpdate);
 
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
